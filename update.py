@@ -56,14 +56,14 @@ def convert_theme(input_file, output_file):
     with open(output_file, 'w') as f:
         json.dump(converted_themes, f, indent=2)
     
-    print(f"    Update Done: {len(converted_themes)} themes.")
+    #print(f"Conversion complete: {len(converted_themes)} themes converted")
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python convert.py input.json output.json")
         sys.exit(1)
     
-    input_file = "sys.argv[1]"
+    input_file = sys.argv[1]
     output_file = sys.argv[2]
     
     convert_theme(input_file, output_file)
