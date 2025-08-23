@@ -185,6 +185,38 @@ search_themes() {
 }
 
 
+convert_ghogh_to_ghostty() {
+    local input="$1"
+    local output="$2"
+
+    if [ ! -f "$input" ]; then
+        echo "Error: input file not found: $input"
+        exit 1
+    fi
+
+    jq '
+      # helper function to zero-pad single-digit numbers
+      def lpad:
+        if (.|length) == 1 then "0"+. else . end;
+
+      [ .[] |
+        {
+          (.name): (
+            reduce range(0;16) as $i ({}; 
+              .["palette = \($i)"] = .["color_" + ($i|tostring|lpad)]
+            )
+            + (if .background then {background: "background = \(.background)"} else {} end)
+            + (if .foreground then {foreground: "foreground = \(.foreground)"} else {} end)
+            + (if .cursor then {"cursor-color": "cursor-color = \(.cursor)"} else {} end)
+          )
+        }
+      ]
+    ' "$input" > "$output"
+
+    echo "✓ Done  $input → $output"
+}
+
+
 
 
 
@@ -215,14 +247,16 @@ check_theme_file(){
         echo -e "\e[1;31m[✘] Theme JSON file not found:\e[0m $json_file"
         echo ""
         echo "Downloading Theme file from Github."
-        wget -q -O "$json_file" "https://raw.githubusercontent.com/Gogh-Co/Gogh/master/data/themes.json"
+        wget -q -O temp.json "https://raw.githubusercontent.com/Gogh-Co/Gogh/master/data/themes.json"
+        python3 update.py temp.json themes.json
+        rm temp.json
         
         if [[ $? -ne 0 ]]; then
             echo -e "\e[1;31m[✘] Failed to download themes.json from Github\e[0m"
             return 1
         fi
         
-        echo -e "\e[1;32m[✔] Theme file downloaded successfully!\e[0m"
+        echo -e "\e[1;32m[✔ ] Theme file downloaded successfully!\e[0m"
         echo ""
     fi
     
