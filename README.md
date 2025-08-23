@@ -35,21 +35,22 @@
 
 ### Installation
 
-\`\`\`bash
-# Clone the repository
-git clone https://github.com/yourusername/ghostty-themes-manager.git
-cd ghostty-themes-manager
+```bash
 
-# Make the script executable
-chmod +x ghostty-themes.sh
+git clone https://github.com/viraatmaurya/Terminal-Tones.git
+cd Terminal-Tones
+
+
+chmod +x themes.sh
 
 # Run it!
-./ghostty-themes.sh
-\`\`\`
+./themes.sh
+
+```
 
 ### Usage
 
-\`\`\`bash
+```bash
 # Interactive theme selection
 ./ghostty-themes.sh
 
@@ -64,7 +65,7 @@ chmod +x ghostty-themes.sh
 
 # Show help
 ./ghostty-themes.sh -h
-\`\`\`
+```
 
 ---
 
@@ -92,9 +93,9 @@ The script includes **300+ professionally designed themes**, including:
 - **Minimal**: Zenburn, Monokai, Tomorrow  
 
 👉 View the complete list with:  
-\`\`\`bash
+```bash
 ./ghostty-themes.sh -l
-\`\`\`
+```
 
 ---
 
@@ -102,20 +103,20 @@ The script includes **300+ professionally designed themes**, including:
 
 ### Dependencies
 The script will automatically install these if missing:
-- \`jq\` → JSON processor for theme parsing  
-- \`sed\` → Stream editor for config manipulation  
-- \`wget\` → File downloader for theme updates  
+- `jq` → JSON processor for theme parsing  
+- `sed` → Stream editor for config manipulation  
+- `wget` → File downloader for theme updates  
 
 ### File Structure
 
-\`\`\`
+```
 ~/.config/ghostty/
 ├── config              # Main Ghostty configuration
 └── themes/             # Individual theme color files
     ├── Dracula         # Theme color definitions
     ├── OneDark         # Theme color definitions
     └── ...             # Other themes
-\`\`\`
+```
 
 ### How It Works
 1. **Theme Discovery**: Themes Stored in json file  
