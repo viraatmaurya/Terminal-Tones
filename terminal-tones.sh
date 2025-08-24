@@ -2,6 +2,12 @@
 
 set -e
 
+
+
+AUTHOR="Viraat Maurya"
+VERSION="1.0.0"
+LICENSE="MIT"
+
 echo ""
 echo ""
 echo -e "
@@ -19,13 +25,23 @@ banner=$(cat <<'EOF'
 
 \e[1;33m
             ┌────────────────────────────────────────────────────────────┐
-            │   \e[1;36mColor palettes courtesy of: \e[1;35mGogh Theme Manager\e[1;33m           │
             │   \e[1;36mCreated by: \e[1;93mViraat Maurya\e[1;33m                                │
             │   \e[1;36mInstagram: \e[1;95mhttps://www.instagram.com/viraat_maurya/\e[1;33m      │
+            │   \e[1;36mGithub: \e[1;95mhttps://www.github.com/viraatmaurya/\e[1;33m             │
+            │   \e[1;36mColor palettes courtesy of: \e[1;35mGogh Theme Manager\e[1;33m           │
             └────────────────────────────────────────────────────────────┘
 \e[0m
 EOF
 )
+
+
+show_version(){
+    echo ""
+    echo "      Terminal Tones Version : "$VERSION" "
+    echo ""
+}
+
+
 
 setup_logging() {
     local theme_name="$1"
@@ -45,11 +61,13 @@ show_help() {
     $(basename "$0")                 Interactive theme selection
 
     Options:
+      -v, --version        Show program version
       -h, --help           Show this help message
       -s, --search TERM    Search for themes containing TERM
       -r, --random         Apply a random theme
       -l, --list           List all available themes
       -u, --update         Update themes from GitHub
+      -q, --quit           No banner
 
     Examples:
       
@@ -64,6 +82,8 @@ echo ""
 
 
 update_themes(){
+
+    git pull
 
     wget -q -O temp.json "https://raw.githubusercontent.com/Gogh-Co/Gogh/master/data/themes.json"
     
@@ -118,7 +138,7 @@ search_themes() {
         # Ask user if they want to set one of the found themes
         echo ""
         while true; do
-            read -p "   Do you want to set one of these themes? (y/N): " -n 1 -r
+            read -p "   ↩️ Did  you found the theme in this list? (y/N): " -n 1 -r
             echo ""
             
             case $REPLY in
@@ -190,7 +210,7 @@ search_themes() {
                                         echo "  ❌ Please enter a number between 1 and ${#found_themes[@]}"
                                     fi
                                 else
-                                    echo "  ❌ Please enter a valid number, 'p' to see all themes, or 'q' to quit"
+                                    echo "  ❌ Please enter a valid number, 'A/a' to see all themes, or 'q' to quit"
                                 fi
                                 ;;
                         esac
@@ -641,7 +661,9 @@ main() {
     local config_file="$HOME/.config/ghostty/config" 
     local theme_dir="$HOME/.config/ghostty/themes"
     local json_file="$(dirname "$0")/themes.json"
-    local theme_name=""
+    local dependencies="git jq sed wget python3"
+
+    #TODO: logic if q found in args donot print banner
 
     echo -e "$banner"
     sleep 2
@@ -665,11 +687,17 @@ main() {
                 show_help
                 exit 0
                 ;;
+
+            -v|--version) 
+                show_version
+                exit 0
+                ;;
+
             -s|--search) 
                 search_themes "$2"
-                set_theme "$config_file" "$theme_name" "$theme_dir" "$json_file"
-                setup_logging "$theme_name"
-                exit 0
+                # set_theme "$config_file" "$theme_name" "$theme_dir" "$json_file"
+                # setup_logging "$theme_name"
+                break
                 ;;
             -r|--random) 
                 random_theme
