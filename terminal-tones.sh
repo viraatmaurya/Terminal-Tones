@@ -40,7 +40,7 @@ show_help() {
     cat << EOF
     Usage: $(basename "$0") [OPTIONS]
 
-    Terminal Themes Manager for Ghostty Terminal
+    Color Themes Manager for Ghostty Terminal
 
     $(basename "$0")                 Interactive theme selection
 
@@ -49,7 +49,7 @@ show_help() {
       -s, --search TERM    Search for themes containing TERM
       -r, --random         Apply a random theme
       -l, --list           List all available themes
-      --update             Update themes from GitHub (not implemented yet)
+      -u, --update         Update themes from GitHub
 
     Examples:
       
