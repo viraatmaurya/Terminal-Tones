@@ -2,7 +2,6 @@
 
 <div align="center">
 
-![Terminal Themes Banner](https://raw.githubusercontent.com/yourusername/ghostty-themes-manager/main/assets/banner.png)
 
 *A beautiful theme manager for Ghostty terminal with 300+ curated color schemes*
 
@@ -67,20 +66,7 @@ chmod +x themes.sh
 ./ghostty-themes.sh -h
 ```
 
----
 
-## 🖥️ Screenshots
-
-**Interactive Selection**  
-![Screenshot 1](#)  
-
-**Theme Search**  
-![Screenshot 2](#)  
-
-**Color Preview**  
-![Screenshot 3](#)  
-
----
 
 ## 🎨 Available Themes
 
@@ -147,8 +133,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 **Viraat Maurya**  
 - 💼 Terminal Enthusiast  
-- 🎨 UI/UX Design and Programming Lover  
-- 🔧 Open Source Contributor  
+- 🎨 Games, Programming, Video Creator  
 
 **Connect with Me**  
 - 📷 Instagram: [@viraat_maurya](https://instagram.com/viraat_maurya)  
