@@ -54,11 +54,10 @@ setup_logging() {
 
 show_help() {
     cat << EOF
-    Usage: $(basename "$0") [OPTIONS]
+    Usage: ./$(basename "$0") [OPTIONS]
 
-    Color Themes Manager for Ghostty Terminal
 
-    $(basename "$0")                 Interactive theme selection
+    ./$(basename "$0")     Interactive theme selection
 
     Options:
       -v, --version        Show program version
@@ -97,6 +96,7 @@ update_themes(){
         exit 1
     fi
     echo "  🔄 Update Started .."
+
     python3 update.py "temp.json" "themes.json"
     if [ $? -eq 0 ]; then
         echo "  [✔  ]Themes updation completed successfully!"
@@ -111,128 +111,232 @@ update_themes(){
 
 
 search_themes() {
-    local search_term="$1"
-    local found_themes=()
-    local found_indexes=()
-    local lowercase_search="${search_term,,}"  # Convert to lowercase for case-insensitive matching
-    local counter=1
+	local search_term="$1"
+	local found_themes=()
+    	local found_indexes=()
+    	local lowercase_search="${search_term,,}"  # Convert to lowercase for case-insensitive matching
+    	local counter=1
     
-    for i in "${!themes[@]}"; do
-        local theme="${themes[$i]}"
-        local lowercase_theme="${theme,,}"  # Convert theme to lowercase for comparison
-        
-        # Check for partial match (case-insensitive)
-        if [[ "$lowercase_theme" == *"$lowercase_search"* ]]; then
-            found_themes+=("$counter: $theme")
-            found_indexes+=("$i")  # Store the actual array index
-            ((counter++))
-        fi
-    done
-    
-    if [[ ${#found_themes[@]} -gt 0 ]]; then
-        echo "  Found ${#found_themes[@]} theme(s) matching '$search_term':"
-        echo "────────────────────────────────────────────────────────────"
-        printf '    %s\n' "${found_themes[@]}"
-        echo "────────────────────────────────────────────────────────────"
-        
-        # Ask user if they want to set one of the found themes
-        echo ""
+	for i in "${!themes[@]}"; do
+		local theme="${themes[$i]}"
+		local lowercase_theme="${theme,,}"  # Convert theme to lowercase for comparison
+
+		# Check for partial match (case-insensitive)
+		if [[ "$lowercase_theme" == *"$lowercase_search"* ]]; then
+		    found_themes+=("$counter: $theme")
+		    found_indexes+=("$i")  # Store the actual array index
+		    ((counter++))
+		fi
+	done
+
+
         while true; do
-            read -p "   ↩️ Did  you found the theme in this list? (y/N): " -n 1 -r
-            echo ""
-            
-            case $REPLY in
-                [Yy])
-                    echo ""
-                    echo "  🎨 Available themes:"
-                    echo "────────────────────"
+	    echo ""
+            echo "  🎨 Available themes:"
+            echo "────────────────────"
                     
-                    # Show first 10 themes with preview option
-                    for ((i=0; i<${#found_themes[@]} && i<10; i++)); do
-                        echo "   ${found_themes[$i]}"
-                    done
-                    
-                    if [[ ${#found_themes[@]} -gt 10 ]]; then
-                        echo "   ... and $(( ${#found_themes[@]} - 10 )) more themes"
-                    fi
-                    
-                    echo ""
-                    
-                    # Theme selection loop
-                    while true; do
-                        read -p "   Enter theme number (1-${#found_themes[@]}) or 'a/A' to see all themes or 'q' to quit: " selection
-                        
-                        case $selection in
-                            [Qq])
-                                echo "  🚫 Search cancelled."
-                                exit 0
-                                ;;
-                            [Aa])
-                                echo ""
-                                echo "  📋 All matching themes:"
-                                echo "───────────────────────"
-                                printf '    %s\n' "${found_themes[@]}"
-                                echo "───────────────────────"
-                                echo ""
-                                continue
-                                ;;
-                            *)
-                                if [[ "$selection" =~ ^[0-9]+$ ]]; then
-                                    if (( selection >= 1 && selection <= ${#found_themes[@]} )); then
-                                        local actual_index=${found_indexes[$((selection-1))]}
-                                        theme_name="${themes[$actual_index]}"
-                                        echo ""
-                                        echo "  ✅ Selected theme: $theme_name"
-                                        
-                                        # Show theme preview
-                                        echo -n "   🎨 Colors: "
-                                        local palettes=()
-                                        mapfile -t palettes < <(jq -r --arg name "$theme_name" \
-                                            '.[] | select(has($name))[$name] | to_entries[] | select(.key|test("palette")) | .value' "$json_file")
-                                        
-                                        for c in "${palettes[@]}"; do
-                                            printf "%s " "$(color_circle "$c")"
-                                        done
-                                        echo ""
-                                        echo ""
-                                        
-                                        # Final confirmation
-                                        read -p "   Apply this theme? (Y/n): " -n 1 -r
-                                        echo ""
-                                        if [[ $REPLY =~ ^[Nn]$ ]]; then
-                                            echo "  ↩️  Let's try another theme..."
-                                            continue
-                                        else
-                                            echo "  ✨ Applying theme: $theme_name"
-                                            break 2  # Break out of both loops
-                                        fi
-                                    else
-                                        echo "  ❌ Please enter a number between 1 and ${#found_themes[@]}"
-                                    fi
-                                else
-                                    echo "  ❌ Please enter a valid number, 'A/a' to see all themes, or 'q' to quit"
-                                fi
-                                ;;
-                        esac
-                    done
-                    ;;
-                [Nn]|"")
-                    echo "  👋 Search completed. No theme selected."
-                    exit 0
-                    ;;
-                *)
-                    echo "  ❌ Please answer 'y' for yes or 'n' for no"
-                    ;;
-            esac
+	    # Show first 10 themes with preview option
+	    for ((i=0; i<${#found_themes[@]} && i<10; i++)); do
+		echo "   ${found_themes[$i]}"
+	    done
+	    
+	    if [[ ${#found_themes[@]} -gt 10 ]]; then
+		echo "   ... and $(( ${#found_themes[@]} - 10 )) more themes"
+	    fi
+	    
+	    echo ""
+	    
+	    # Theme selection loop
+	    while true; do
+		read -p "   Enter theme number (1-${#found_themes[@]}) or 'a/A' to see all themes or 'q' to quit: " selection
+		
+		case $selection in
+		    [Qq])
+			echo "  🚫 Search cancelled."
+			exit 0
+			;;
+		    [Aa])
+			echo ""
+			echo "  📋 All matching themes:"
+			echo "───────────────────────"
+			printf '    %s\n' "${found_themes[@]}"
+			echo "───────────────────────"
+			echo ""
+			continue
+			;;
+		    *)
+			if [[ "$selection" =~ ^[0-9]+$ ]]; then
+			    if (( selection >= 1 && selection <= ${#found_themes[@]} )); then
+				local actual_index=${found_indexes[$((selection-1))]}
+				theme_name="${themes[$actual_index]}"
+				echo ""
+				echo "  ✅ Selected theme: $theme_name"
+				
+				# Show theme preview
+				echo -n "   🎨 Colors: "
+				local palettes=()
+				mapfile -t palettes < <(jq -r --arg name "$theme_name" \
+				    '.[] | select(has($name))[$name] | to_entries[] | select(.key|test("palette")) | .value' "$json_file")
+				
+				for c in "${palettes[@]}"; do
+				    printf "%s " "$(color_circle "$c")"
+				done
+				echo ""
+				echo ""
+				
+				# Final confirmation
+				read -p "   Apply this theme? (Y/n): " -n 1 -r
+				echo ""
+				if [[ $REPLY =~ ^[Nn]$ ]]; then
+				    echo "  ↩️  Let's try another theme..."
+				    continue
+				else
+				    echo "  ✨ Applying theme: $theme_name"
+				    break 2  # Break out of both loops
+				fi
+			    else
+				echo "  ❌ Please enter a number between 1 and ${#found_themes[@]}"
+			    fi
+			else
+			    echo "  ❌ Please enter a valid number, 'A/a' to see all themes, or 'q' to quit"
+			fi
+			;;
+		esac
+	    done
         done
-    else
+    if [[ ${#found_themes[@]} -lt 1 ]]; then
+    	
         echo "  ❌ No themes found matching '$search_term'"
         echo "  💡 Try a broader search term or use -l to list all available themes."
         exit 1
     fi
+
 }
 
 
+# search_themes()_ {
+#     local search_term="$1"
+#     local found_themes=()
+#     local found_indexes=()
+#     local lowercase_search="${search_term,,}"  # Convert to lowercase for case-insensitive matching
+#     local counter=1
+#
+#     for i in "${!themes[@]}"; do
+#         local theme="${themes[$i]}"
+#         local lowercase_theme="${theme,,}"  # Convert theme to lowercase for comparison
+#
+#         # Check for partial match (case-insensitive)
+#         if [[ "$lowercase_theme" == *"$lowercase_search"* ]]; then
+#             found_themes+=("$counter: $theme")
+#             found_indexes+=("$i")  # Store the actual array index
+#             ((counter++))
+#         fi
+#     done
+#
+#     if [[ ${#found_themes[@]} -gt 0 ]]; then
+#         echo "  Found ${#found_themes[@]} theme(s) matching '$search_term':"
+#         echo "────────────────────────────────────────────────────────────"
+#         printf '    %s\n' "${found_themes[@]}"
+#         echo "────────────────────────────────────────────────────────────"
+#
+#         # Ask user if they want to set one of the found themes
+#         echo ""
+#         while true; do
+#             # read -p "   ↩️ Did  you found the theme in this list? (y/N): " -n 1 -r
+#             # echo ""
+#             #
+#             # case $REPLY in
+#                 # [Yy])
+#                     echo ""
+#                     echo "  🎨 Available themes:"
+#                     echo "────────────────────"
+#
+#                     # Show first 10 themes with preview option
+#                     for ((i=0; i<${#found_themes[@]} && i<10; i++)); do
+#                         echo "   ${found_themes[$i]}"
+#                     done
+#
+#                     if [[ ${#found_themes[@]} -gt 10 ]]; then
+#                         echo "   ... and $(( ${#found_themes[@]} - 10 )) more themes"
+#                     fi
+#
+#                     echo ""
+#
+#                     # Theme selection loop
+#                     while true; do
+#                         read -p "   Enter theme number (1-${#found_themes[@]}) or 'a/A' to see all themes or 'q' to quit: " selection
+#
+#                         case $selection in
+#                             [Qq])
+#                                 echo "  🚫 Search cancelled."
+#                                 exit 0
+#                                 ;;
+#                             [Aa])
+#                                 echo ""
+#                                 echo "  📋 All matching themes:"
+#                                 echo "───────────────────────"
+#                                 printf '    %s\n' "${found_themes[@]}"
+#                                 echo "───────────────────────"
+#                                 echo ""
+#                                 continue
+#                                 ;;
+#                             *)
+#                                 if [[ "$selection" =~ ^[0-9]+$ ]]; then
+#                                     if (( selection >= 1 && selection <= ${#found_themes[@]} )); then
+#                                         local actual_index=${found_indexes[$((selection-1))]}
+#                                         theme_name="${themes[$actual_index]}"
+#                                         echo ""
+#                                         echo "  ✅ Selected theme: $theme_name"
+#
+#                                         # Show theme preview
+#                                         echo -n "   🎨 Colors: "
+#                                         local palettes=()
+#                                         mapfile -t palettes < <(jq -r --arg name "$theme_name" \
+#                                             '.[] | select(has($name))[$name] | to_entries[] | select(.key|test("palette")) | .value' "$json_file")
+#
+#                                         for c in "${palettes[@]}"; do
+#                                             printf "%s " "$(color_circle "$c")"
+#                                         done
+#                                         echo ""
+#                                         echo ""
+#
+#                                         # Final confirmation
+#                                         read -p "   Apply this theme? (Y/n): " -n 1 -r
+#                                         echo ""
+#                                         if [[ $REPLY =~ ^[Nn]$ ]]; then
+#                                             echo "  ↩️  Let's try another theme..."
+#                                             continue
+#                                         else
+#                                             echo "  ✨ Applying theme: $theme_name"
+#                                             break 2  # Break out of both loops
+#                                         fi
+#                                     else
+#                                         echo "  ❌ Please enter a number between 1 and ${#found_themes[@]}"
+#                                     fi
+#                                 else
+#                                     echo "  ❌ Please enter a valid number, 'A/a' to see all themes, or 'q' to quit"
+#                                 fi
+#                                 ;;
+#                         esac
+#                     done
+#                     ;;
+#                 [Nn]|"")
+#                     echo "  👋 Search completed. No theme selected."
+#                     exit 0
+#                     ;;
+#                 *)
+#                     echo "  ❌ Please answer 'y' for yes or 'n' for no"
+#             #         ;;
+#             # esac
+#         done
+#     else
+#         echo "  ❌ No themes found matching '$search_term'"
+#         echo "  💡 Try a broader search term or use -l to list all available themes."
+#         exit 1
+#     fi
+# }
+#
+#
 convert_ghogh_to_ghostty() {
     local input="$1"
     local output="$2"
