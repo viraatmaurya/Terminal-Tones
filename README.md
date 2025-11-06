@@ -40,10 +40,10 @@ git clone https://github.com/viraatmaurya/Terminal-Tones.git
 cd Terminal-Tones
 
 
-chmod +x themes.sh
+chmod +x terminal-tones.sh
 
 # Run it!
-./themes.sh
+./terminal-tones.sh
 
 ```
 
@@ -51,19 +51,19 @@ chmod +x themes.sh
 
 ```bash
 # Interactive theme selection
-./ghostty-themes.sh
+./terminal-tones.sh
 
 # Search for themes
-./ghostty-themes.sh -s "dark"
+./terminal-tones.sh -s "dark"
 
 # Apply random theme
-./ghostty-themes.sh -r
+./terminal-tones.sh -r
 
 # List all available themes
-./ghostty-themes.sh -l
+./terminal-tones.sh -l
 
 # Show help
-./ghostty-themes.sh -h
+./terminal-tones.sh -h
 ```
 
 
